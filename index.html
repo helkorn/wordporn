@@ -3,417 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordFraud 1.0</title>
+    <title>WordPorn</title>
     <style>
         @font-face {
             font-family: 'C64';
-            src: url('fontC64.ttf') format('truetype');
+            src: url('fonts/fontC64.ttf') format('truetype');
+        }
+        @font-face {
+            font-family: 'Typewriter';
+            src: url('fonts/fontTW.ttf') format('truetype');
         }
         body {
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333333;
+            background-color: #000;
+            color: #fff;
             margin: 0;
             padding: 0;
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
+            align-items: center;
             min-height: 100vh;
             flex-direction: column;
-            overflow-y: auto;
+            overflow: hidden;
             position: relative;
         }
         .container {
-            max-width: 600px;
+            max-width: 800px;
             text-align: center;
             padding: 20px;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-        }
-        .input-container {
-            max-width: 650px;
-            text-align: center;
-            padding: 25px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            background-color: #ffffff;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
+            background-color: #111;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
         h1 {
-            color: #333333;
+            color: #fff;
             font-size: 2em;
             margin-bottom: 20px;
         }
-        .small-text {
-            font-size: 1em;
+        .timer {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+        .shuffled-word {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            color: #fff;
         }
         input[type="text"] {
             width: 80%;
             padding: 10px;
             font-size: 16px;
             margin-bottom: 10px;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 5px;
-            background-color: #f9f9f9;
-            color: #333333;
+            background-color: #222;
+            color: #fff;
+            text-align: center;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
             autocomplete: off;
-        }
-        input[type="text"]::placeholder {
-            color: #333333;
+            spellcheck: false;
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 5px 10px;
+            font-size: 14px;
             cursor: pointer;
-            border: 1px solid #ccc;
+            border: 1px solid #333;
             border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
+            background-color: #333;
+            color: #fff;
             transition: background-color 0.3s;
             margin-top: 10px;
         }
         button:hover {
-            background-color: #555555;
+            background-color: #555;
         }
-        .columns {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .column {
-            flex: 1;
-            min-width: 250px;
-            padding: 10px;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: left;
-        }
-        li {
-            background: #f9f9f9;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            color: #333333;
-            text-transform: uppercase;
-            cursor: pointer;
-            position: relative;
-        }
-        li:hover {
-            background-color: #eee;
-        }
-        .reset-button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border: 1px solid #ccc;
-            border-radius: 50px;
-            background-color: #333333;
-            color: #ffffff;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-            display: none;
-        }
-        .reset-button:hover {
-            background-color: #555555;
-        }
-        .result-title {
-            font-size: 1em;
+        .result {
             margin-top: 20px;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            color: #333333;
+            font-size: 1em;
+            color: #f00;
         }
-        .centered {
-            display: flex;
-            justify-content: center;
-            text-align: center;
-        }
-        .no-results {
-            text-align: center;
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            background: #f9f9f9;
-            color: #333333;
-            text-transform: capitalize;
-        }
-        .highlight {
-            font-size: 1.2em;
-            margin-top: 5px;
-            color: #333;
-            font-weight: bold;
-        }
-        .super-highlight {
-            font-size: 1.5em;
-            margin-top: 5px;
-            color: red;
-            font-weight: bold;
-        }
-        .full-screen-image {
+        .link-box {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            top: 20px;
+            right: 20px;
+            font-size: 14px;
+            color: #fff;
+            white-space: nowrap;
+            text-align: right;
         }
-        .full-screen-image img {
-            max-width: 100%;
-            max-height: 100%;
+        .link-box a {
+            color: #888;
+            text-decoration: none;
+            font-weight: bold;
+            padding-right: 20px;
+        }
+        .link-box a:hover {
+            text-decoration: underline;
         }
         .hidden {
             display: none;
         }
-        .option-container {
-            margin-top: 10px;
-            text-align: right;
-        }
-        .option-text {
-            color: #000000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .option-text:hover {
-            text-decoration: underline;
-        }
-        .basic-text {
-            font-family: 'C64';
-            color: #696969;
+        .typewriter-box {
+            position: absolute;
+            top: 40px;
+            right: 20px;
+            background-color: #f5f5f5;
+            color: #000;
+            padding: 10px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            font-family: 'Typewriter', monospace;
+            font-size: 13px;
             white-space: pre-wrap;
+            width: 200px;
         }
-        .image-container {
-            display: none;
+        .waiting {
+            font-size: 0.8em;
+            color: #fff;
+            animation: waitingAnimation 1.5s infinite;
+        }
+        @keyframes waitingAnimation {
+            0%, 100% {
+                color: #888;
+            }
+            35% {
+                color: #444;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container" id="mainContent">
-        <div class="input-container" id="inputContainer">
-            <h1 id="mainTitle">WordFraud 1.0</h1>
-            <input type="text" id="letters" placeholder="Syötä kirjaimet (esim. aertspl)" autocomplete="off" disabled onkeypress="handleKeyPress(event)">
-            <button id="fraudeloiButton" onclick="findWords()" disabled>Fraudeloi</button>
-        </div>
-        <div class="container" id="mainContainer" style="display: none;">
-            <div class="result-title" id="resultTitle"></div>
-            <div class="centered">
-                <div class="highlight" id="highlightMessage" style="display: none;">Huippuhyvä löytö!</div>
-                <div class="super-highlight" id="superHighlightMessage" style="display: none;">SUPERLÖYTÖ!</div>
-            </div>
-            <div class="column" id="resultColumn"></div>
-            <div class="centered">
-                <button class="reset-button" id="resetButton" onclick="resetPage()">Uudelleen</button>
-            </div>
-        </div>
+    <div class="link-box" id="whatIsThisLink">
+        <a href="javascript:void(0)" onclick="showAnalgrammi()">Mikä tämä on?  </a>
     </div>
-    
-    <div class="full-screen-image" id="rabbitImage" style="display: none;">
-        <img src="therabbit.png" alt="Jänis">
+    <div class="container">
+        <h1>Word<span style="color: red;">P</span>orn</h1>
+        <p>Analgrammit. Mitä nyt vittua taas.</p>
+        <div class="shuffled-word" id="shuffledWord">Ladataan 0%</div>
+        <div class="timer" id="timer">20</div>
+        <input type="text" id="answer" placeholder="Kirjoita vastaus" autocomplete="off" spellcheck="false">
+        <div>
+            <button id="solveButton" onclick="checkAnswer()">RATKAISE</button>
+        </div>
+        <div class="result" id="result"></div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0"></script>
     <script>
-        let words = new Set();
-        let isDataLoaded = false;
-        const medianThreshold = 50;
-        const superThreshold = 75;
-        const suomenkielisetKirjaimet = 'abcdefghijklmnopqrstuvwxyzåäö';
+        let words = [];
+        let currentWord = '';
+        let timer;
+        let timeLeft = 20;
+        let paused = false;
 
-        Papa.parse('https://raw.githubusercontent.com/timosalonen/wordfraud/main/wordfraudFI.csv', {
-            download: true,
-            complete: function(results) {
-                results.data.flat().map(word => word.trim()).filter(Boolean).forEach(word => {
-                    words.add(word.toLowerCase());
-                });
-                console.log('Sanat ladattu:', words.size);
-                isDataLoaded = true;
-                checkIfAllLoaded();
-            }
-        });
-
-        function checkIfAllLoaded() {
-            if (isDataLoaded) {
-                document.getElementById('letters').disabled = false;
-                document.getElementById('fraudeloiButton').disabled = false;
-            }
-        }
-
-        function isValidWord(word) {
-            return words.has(word);
-        }
-
-        function getAllCombinations(letters) {
-            let results = new Set();
-
-            function combine(prefix, letters) {
-                for (let i = 0; i < letters.length; i++) {
-                    let newPrefix = prefix + letters[i];
-                    if (isValidWord(newPrefix)) {
-                        results.add(newPrefix);
-                    }
-                    if (letters[i] === '-') {
-                        suomenkielisetKirjaimet.split('').forEach(kirjain => {
-                            combine(prefix + kirjain, letters.slice(0, i) + letters.slice(i + 1));
-                        });
-                    } else {
-                        combine(newPrefix, letters.slice(0, i) + letters.slice(i + 1));
+        function startTimer() {
+            clearInterval(timer);
+            timer = setInterval(() => {
+                if (!paused) {
+                    timeLeft--;
+                    document.getElementById('timer').textContent = timeLeft;
+                    if (timeLeft <= 0) {
+                        clearInterval(timer);
+                        handleTimeOut();
                     }
                 }
+            }, 1000);
+        }
+
+        function shuffleWord(word) {
+            let shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
+            while (shuffledWord === word) {
+                shuffledWord = word.split('').sort(() => Math.random() - 0.5).join('');
             }
-
-            combine('', letters);
-            return Array.from(results).sort((a, b) => b.length - a.length);
+            return shuffledWord;
         }
 
-        function showConfetti() {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 }
-            });
-        }
-
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                findWords();
+        function loadNewWord() {
+            if (words.length > 0) {
+                currentWord = words[Math.floor(Math.random() * words.length)];
+                const shuffledWord = shuffleWord(currentWord);
+                document.getElementById('shuffledWord').textContent = shuffledWord;
+                document.getElementById('answer').value = '';
+                timeLeft = 20;
+                document.getElementById('timer').textContent = timeLeft;
+                startTimer();
+            } else {
+                document.getElementById('shuffledWord').textContent = 'Ei sanoja ladattu.';
             }
         }
 
-        function findWords() {
-            const letters = document.getElementById('letters').value.toUpperCase();
-            const resultColumn = document.getElementById('resultColumn');
-            const resultTitle = document.getElementById('resultTitle');
-            const highlightMessage = document.getElementById('highlightMessage');
-            const superHighlightMessage = document.getElementById('superHighlightMessage');
-            const fraudeloiButton = document.getElementById('fraudeloiButton');
-            const resetButton = document.getElementById('resetButton');
-            const mainContainer = document.getElementById('mainContainer');
-            const inputContainer = document.getElementById('inputContainer');
-            resultColumn.innerHTML = '';
-            resultTitle.style.display = 'none';
-            highlightMessage.style.display = 'none';
-            superHighlightMessage.style.display = 'none';
-
-            if (letters.length < 2 || letters.length > 9) {
-                alert("Anna 2-9 kirjainta.");
+        function checkAnswer() {
+            const answer = document.getElementById('answer').value.trim().toLowerCase();
+            if (answer === '') {
+                document.getElementById('result').textContent = 'Vastaa nyt jotain menee hermo.';
                 return;
             }
-
-            console.time('findPossibleWords');
-            const possibleWords = getAllCombinations(letters.toLowerCase());
-            console.timeEnd('findPossibleWords');
-
-            if (possibleWords.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.textContent = 'Ei löydettyjä sanoja';
-                noResults.classList.add('no-results');
-                resultColumn.appendChild(noResults);
-            } else {
-                possibleWords.forEach(word => {
-                    const li = document.createElement('li');
-                    li.textContent = word.toUpperCase();
-                    li.onclick = () => findWordsForWord(word.toUpperCase());
-                    li.id = `word-${word.toUpperCase()}`;
-                    resultColumn.appendChild(li);
+            paused = true;
+            if (answer === currentWord.toLowerCase()) {
+                revealCorrectAnswer(() => {
+                    document.body.innerHTML = `
+                        <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                            Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..
+                        </div>`;
+                    let countdown = 5;
+                    const interval = setInterval(() => {
+                        countdown--;
+                        document.body.innerHTML = `
+                            <div style="color: #fff; text-align: center; font-size: 2em; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                                Ihan oikein, hienoa!<br>Äidin pikku vittunaama.<br>Ladataan uudestaan..<br>${countdown}
+                            </div>`;
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            location.reload();
+                        }
+                    }, 1000);
                 });
-            }
-
-            const resultCount = possibleWords.length - 1;
-
-            /* if (resultCount > superThreshold) {
-                superHighlightMessage.style.display = 'block';
-                showConfetti();
-                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
-            } else if (resultCount > medianThreshold) {
-                highlightMessage.style.display = 'block';
-                resultTitle.innerHTML = `Kysyit: ${letters}. ${letters.length} kirjainta ja ${resultCount} sanaa`;
             } else {
-                resultTitle.innerHTML = `Kysyit: ${letters}`;
-            } */
-            resultTitle.innerHTML = `Kysyit: ${letters}`;
-
-            inputContainer.style.display = 'none';
-            mainContainer.style.display = 'block';
-            resultTitle.style.display = 'block';
-            resetButton.style.display = 'block';
-
-            window.scrollTo(0, 0);
+                revealCorrectAnswer();
+            }
         }
 
-        function findWordsForWord(word) {
-            document.getElementById('letters').value = word;
-            findWords();
-        }
+        function revealCorrectAnswer(callback) {
+            const shuffledWordElement = document.getElementById('shuffledWord');
+            shuffledWordElement.style.color = '#FFFF00';
+            let currentIndex = 0;
 
-        function resetPage() {
-            const previousLetters = document.getElementById('resultTitle').textContent.split(': ')[1];
-            document.getElementById('letters').value = previousLetters;
-            document.getElementById('mainContainer').style.display = 'none';
-            document.getElementById('inputContainer').style.display = 'block';
-        }
-
-        // Function to change the title text
-        function changeTitleText() {
-            const title = document.getElementById('mainTitle');
-            const originalText = "WordFraud 1.0";
-            const newText = "Väliviiva on jokeri!";
-            const originalFontSize = window.getComputedStyle(title).fontSize;
-            const newFontSize = (parseFloat(originalFontSize) / 2) + 'px';
-
-            function randomizeText(current, target) {
-                let randomizedText = current.split('');
-                for (let i = 0; i < target.length; i++) {
-                    if (Math.random() < 0.5) {
-                        randomizedText[i] = target[i];
+            const interval = setInterval(() => {
+                if (currentIndex < currentWord.length) {
+                    shuffledWordElement.textContent =
+                        currentWord.slice(0, currentIndex + 1) +
+                        shuffledWordElement.textContent.slice(currentIndex + 1);
+                    currentIndex++;
+                } else {
+                    clearInterval(interval);
+                    if (callback) {
+                        setTimeout(callback, 1500);
+                    } else {
+                        setTimeout(() => {
+                            window.location.href = 'https://timosalonen.github.io/wordfraud/wordporn.html';
+                        }, 2000);
                     }
                 }
-                return randomizedText.join('');
-            }
-
-            let changing = true;
-
-            setInterval(() => {
-                if (changing) {
-                    let tempText = new Array(newText.length).fill(' ').join('');
-                    const interval = setInterval(() => {
-                        tempText = randomizeText(tempText, newText);
-                        title.textContent = tempText;
-                        if (tempText === newText) {
-                            clearInterval(interval);
-                            title.style.fontSize = newFontSize;
-                            setTimeout(() => {
-                                changing = false;
-                            }, 1000);
-                        }
-                    }, 50);
-                } else {
-                    let tempText = new Array(originalText.length).fill(' ').join('');
-                    title.style.fontSize = originalFontSize;
-                    const interval = setInterval(() => {
-                        tempText = randomizeText(tempText, originalText);
-                        title.textContent = tempText;
-                        if (tempText === originalText) {
-                            clearInterval(interval);
-                            changing = true;
-                        }
-                    }, 50);
-                }
-            }, 6000);
+            }, 200);
         }
 
-        changeTitleText();
+        function handleTimeOut() {
+            revealCorrectAnswer();
+        }
+
+        function showAnalgrammi() {
+            paused = true;
+            document.getElementById('timer').innerHTML = '<span class="waiting">-sinulle on postia-</span>';
+            const linkBox = document.getElementById('whatIsThisLink');
+            linkBox.innerHTML = '';
+            const box = document.createElement('div');
+            box.id = 'typewriterBox';
+            box.className = 'typewriter-box';
+            document.body.appendChild(box);
+            const text = 'Rakas persehaju,\n\nTämä on helppo peli erityisen vanhoille kuten sinä.\n\nKaikki sanat ovat alatyylisiä kuten sinä.\n\nSanassa on kirjaimet menneet sekaisin kuten sinä.\n\nSiksi se on epäselvä, kuin sinäkin.\n\nMuodosta kirjaimista sana. Ole yllättävä kuin äitisi raskaus.\n\nOnnea peliin. Se olkoon helppo, kuin jokainen kumppanisi.\n\nT. Koiranoksennus johon nussit';
+            let index = 0;
+
+            function typeNext() {
+                if (index < text.length) {
+                    box.textContent += text[index];
+                    index++;
+                    let delay = 40;
+                    if (text[index - 1] === ' ' || text[index - 1] === '\n') {
+                        delay = 100;
+                    }
+                    setTimeout(typeNext, delay);
+                } else {
+                    setTimeout(removeText, 3000); // Lisätty ylimääräinen sekunti
+                }
+            }
+
+            function removeText() {
+                document.getElementById('timer').innerHTML = timeLeft; // Nopeutettu muutos kelloksi
+                let grayValue = 245;
+                let upperIndex = 0;
+                const lines = box.textContent.split('\n');
+                const interval = setInterval(() => {
+                    if (box.textContent.length > 0) {
+                        if (upperIndex < lines.length) {
+                            lines[upperIndex] = '';
+                            upperIndex++;
+                            box.textContent = lines.join('\n');
+                        } else {
+                            const randomIndex = Math.floor(Math.random() * box.textContent.length);
+                            box.textContent = box.textContent.slice(0, randomIndex) + box.textContent.slice(randomIndex + 1);
+                        }
+                        grayValue -= 5;
+                        box.style.backgroundColor = `rgb(${grayValue}, ${grayValue}, ${grayValue})`;
+                    } else {
+                        clearInterval(interval);
+                        box.remove();
+                        paused = false;
+                        startTimer();
+                    }
+                }, 30);
+            }
+
+            typeNext();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetch('wordpornFI.csv')
+                .then(response => response.text())
+                .then(text => {
+                    words = text.split('\n').map(word => word.trim()).filter(Boolean);
+                    loadNewWord();
+                });
+        });
+
+        document.getElementById('answer').addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') {
+                checkAnswer();
+            }
+        });
     </script>
 </body>
 </html>
